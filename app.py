@@ -1,3 +1,5 @@
+# app.py
+
 import streamlit as st
 import os
 from rag_methods import process_documents

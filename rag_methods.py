@@ -47,7 +47,7 @@ def load_json(file_path):
             if isinstance(data, dict):  # Single JSON object
                 text_content = data.get("text", "")
             elif isinstance(data, list):  # JSON array
-                text_content = "\n".join([item.get("text", "") for item in data if isinstance(item, dict)])
+                text_content = "\n".join([item.get("text", "") for item in data if isinstance(item, dict)] )
             else:
                 text_content = ""
             print(f"Loaded content from JSON file {file_path}: {text_content[:100]}...")  # Print a snippet of the content
@@ -67,18 +67,20 @@ def process_documents(file_paths):
     
     print(f"Loaded {len(docs)} documents in total.")  # Log total number of documents loaded
 
-    # Initialize the embeddings
-    embeddings = OpenAIEmbeddings(openai_api_key= api_key)  # Provide OpenAI embeddings
+    # Initialize the OpenAI embeddings
+    embeddings = OpenAIEmbeddings(openai_api_key=api_key)  # Use OpenAI embeddings for the vector database
 
     # Split the documents into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=7000, chunk_overlap=3000)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=9000, chunk_overlap=5000)
     document_chunks = text_splitter.split_documents(docs)
     print(f"Split documents into {len(document_chunks)} chunks.")  # Log number of document chunks
 
     if len(document_chunks) == 0:
         raise ValueError("No valid document chunks created. Please check your documents.")
 
-    # Create the vector database (Chroma)
+    # Create the vector database (Chroma) using OpenAI embeddings
     vector_db = Chroma.from_documents(document_chunks, embedding=embeddings)
     return vector_db
+
+
 
